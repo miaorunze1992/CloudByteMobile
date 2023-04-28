@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
-  StyleSheet,
   Alert,
 } from "react-native";
 
@@ -119,7 +118,7 @@ const SignInScreen = () => {
           style={[
             styles.text_footer,
             {
-              color: colors.shadow,
+              color: colors.text,
             },
           ]}
         >
