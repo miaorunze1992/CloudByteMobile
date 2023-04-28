@@ -1,6 +1,6 @@
 // App.tsx
 import React, { useEffect } from "react";
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from "react-native";
 
 import {
   NavigationContainer,
@@ -8,7 +8,7 @@ import {
   DarkTheme as NavigationDarkTheme,
 } from "@react-navigation/native";
 
-import { createDrawerNavigator, DrawerContent } from "@react-navigation/drawer";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import {
   Provider as PaperProvider,
@@ -18,10 +18,16 @@ import {
 
 import { AuthContext } from "./src/components/context";
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import RootStackScreen from "./src/screens/Base/BaseStackScreen";
 
 const Drawer = createDrawerNavigator();
+import { DrawerContent } from './src/screens/DrawerContent/ DrawerContent';
+
+import MainTabScreen from './src/screens/MainTabScreen/MainTabScreen';
+import SupportScreen from './src/screens/SupportScreen/SupportScreen';
+import SettingsScreen from './src/screens/SettingsScreen/SettingsScreen';
+import BookmarkScreen from './src/screens/BookmarkScreen/BookmarkScreen';
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
@@ -102,10 +108,17 @@ const App = () => {
         const userToken = String(foundUser[0].userToken);
         const userName = foundUser[0].username;
 
+        console.log("=============login请求开始==========");
+        console.log(userToken);
+        console.log(userName);
+        console.log("=============login请求开始==========");
+
         try {
           await AsyncStorage.setItem("userToken", userToken);
         } catch (error) {
           console.log(error);
+
+          console.log("=============login出现问题==========");
         }
 
         console.log("user token:", userToken);
@@ -135,25 +148,25 @@ const App = () => {
     []
   );
 
-  useEffect(()=>{
-    setTimeout(async()=>{
+  useEffect(() => {
+    setTimeout(async () => {
       // setIsLoading(false);
       let userToken;
       userToken = null;
       try {
-        userToken = await AsyncStorage.getItem('userToken');
+        userToken = await AsyncStorage.getItem("userToken");
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
       // console.log('user token',userToken);
-      dispatch({type:'RETRIEVE_TOKEN', token:userToken});
-    },1000)
-  },[]);
+      dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
+    }, 1000);
+  }, []);
 
-  if(loginState.isLoading){
-    return(
-      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <ActivityIndicator size="large"/>
+  if (loginState.isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -162,12 +175,18 @@ const App = () => {
     <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
         <NavigationContainer theme={theme}>
-          { loginState.userToken !== null ? (
-            <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
-
+          {loginState.userToken !== null ? (
+            <Drawer.Navigator
+              drawerContent={(props) => <DrawerContent {...props} />}
+            >
+              <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
+              <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+              <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
+              <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
             </Drawer.Navigator>
-          ):<RootStackScreen/>
-          }
+          ) : (
+            <RootStackScreen />
+          )}
         </NavigationContainer>
       </AuthContext.Provider>
     </PaperProvider>

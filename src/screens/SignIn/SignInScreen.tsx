@@ -94,7 +94,7 @@ const SignInScreen = () => {
       return;
     }
 
-    signIn();
+    signIn(foundUser);
 
     console.log("准备搭建上下文");
   };
