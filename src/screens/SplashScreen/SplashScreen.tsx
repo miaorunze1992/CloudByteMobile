@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 
 const SplashScreen = ({navigation}:any) => {
@@ -36,20 +35,15 @@ const SplashScreen = ({navigation}:any) => {
         >
             <Text style={[styles.title, {
                 color: colors.text
-            }]}>Stay connected with everyone!</Text>
-            <Text style={styles.text}>Sign in with account</Text>
+            }]}>CloudByte株式会社アプリへ、ようこそ!</Text>
+            {/* <Text style={styles.text}>Sign in with account</Text> */}
             <View style={styles.button}>
             <TouchableOpacity onPress={()=>navigation.navigate('SignInScreen')}>
                 <LinearGradient
-                    colors={['#08d4c4', '#01ab9d']}
+                    colors={['#87CEFA', '#0088CC']}
                     style={styles.signIn}
                 >
                     <Text style={styles.textSign}>Get Started</Text>
-                    <MaterialIcons 
-                        name="navigate-next"
-                        color="#fff"
-                        size={20}
-                    />
                 </LinearGradient>
             </TouchableOpacity>
             </View>
@@ -61,12 +55,12 @@ const SplashScreen = ({navigation}:any) => {
 export default SplashScreen;
 
 const {height} = Dimensions.get("screen");
-const height_logo = height * 0.28;
+const height_logo = height * 0.44;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
-    backgroundColor: '#009387'
+    backgroundColor: '#87CEFA'
   },
   header: {
       flex: 2,
@@ -90,17 +84,17 @@ const styles = StyleSheet.create({
       fontSize: 30,
       fontWeight: 'bold'
   },
-  text: {
-      color: 'grey',
-      marginTop:5
-  },
+//   text: {
+//       color: 'grey',
+//       marginTop:5
+//   },
   button: {
       alignItems: 'flex-end',
       marginTop: 30
   },
   signIn: {
-      width: 150,
-      height: 40,
+      width: 160,
+      height: 50,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 50,
