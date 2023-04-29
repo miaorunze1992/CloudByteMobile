@@ -15,11 +15,21 @@ import Feather from "react-native-vector-icons/Feather";
 
 import { useTheme } from "react-native-paper";
 
+import { isUsernameValid, isPasswordValid } from "../../utils/validators";
+import {
+  ERROR_INPUT,
+  USERNAME_PASSWORD_EMPTY,
+  OK_TEXT,
+  LOGIN_INVALID,
+  USERNAME_PASSWORD_WRONG,
+  CONTEXT_SETUP,
+} from "../../utils/message";
+
 import { AuthContext } from "../../components/context";
 
 import Users from "../../model/users";
 
-import styles from "./styles"
+import styles from "./styles";
 
 const SignInScreen = () => {
   const [data, setData] = useState({
@@ -35,42 +45,26 @@ const SignInScreen = () => {
 
   const { signIn } = React.useContext(AuthContext);
 
-  // 检测用户长度
+  // 检测用户名长度
   const handleUserChange = (val: any) => {
-    if (val.trim().length <= 8) {
-      setData({
-        ...data,
-        username: val,
-        check_textInputChange: true,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        username: val,
-        check_textInputChange: false,
-        isValidUser: false,
-      });
-    }
+    setData({
+      ...data,
+      username: val,
+      check_textInputChange: isUsernameValid(val),
+      isValidUser: isUsernameValid(val),
+    });
   };
 
   // 检测密码长度
   const handlePasswordChange = (val: any) => {
-    if (val.trim().length <= 16) {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: true,
-      });
-    } else {
-      setData({
-        ...data,
-        password: val,
-        isValidPassword: false,
-      });
-    }
+    setData({
+      ...data,
+      password: val,
+      isValidPassword: isPasswordValid(val),
+    });
   };
 
+  // 密码是否可见
   const updateSecureTextEntry = () => {
     setData({
       ...data,
@@ -85,32 +79,34 @@ const SignInScreen = () => {
     });
 
     if (data.username.length == 0 || data.password.length == 0) {
-      Alert.alert("错误输入", "用户名或密码不能为空", [{ text: "好的" }]);
+      Alert.alert(ERROR_INPUT, USERNAME_PASSWORD_EMPTY, [{ text: OK_TEXT }]);
       return;
     }
 
     if (foundUser.length == 0) {
-      Alert.alert("登录信息无效", "用户名或密码错误", [{ text: "好的" }]);
+      Alert.alert(LOGIN_INVALID, USERNAME_PASSWORD_WRONG, [{ text: OK_TEXT }]);
       return;
     }
 
     signIn(foundUser);
 
-    console.log("准备搭建上下文");
+    console.log(CONTEXT_SETUP);
   };
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
-      <Animatable.Image 
-                animation="bounceIn"
-                duration={2500}
-            source={require('../../assets/logo.png')}
-            style={styles.logo}
-            resizeMode="stretch"
-            />
-        <Text style={styles.text_header}>CloudByte株式会社アプリへ、ようこそ!</Text>
+        <Animatable.Image
+          animation="bounceIn"
+          duration={2500}
+          source={require("../../assets/logo.png")}
+          style={styles.logo}
+          resizeMode="stretch"
+        />
+        <Text style={styles.text_header}>
+          CloudByte株式会社アプリへ、ようこそ!
+        </Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
