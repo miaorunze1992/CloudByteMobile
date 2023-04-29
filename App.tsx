@@ -17,6 +17,8 @@ import {
 } from "react-native-paper";
 
 import { AuthContext } from "./src/components/context";
+import { loginReducer, initialLoginState } from "./src/store/reducers/authReducer";
+import { login, logout, register, retrieveToken } from "./src/store/actions/authActions";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RootStackScreen from "./src/screens/Base/BaseStackScreen";
@@ -31,13 +33,6 @@ import BookmarkScreen from './src/screens/BookmarkScreen/BookmarkScreen';
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
-
-  // 页面初期State
-  const initialLoginState = {
-    isLoading: true,
-    userName: null,
-    userToken: null,
-  };
 
   const CustomDefaultTheme = {
     ...NavigationDefaultTheme,
@@ -63,39 +58,6 @@ const App = () => {
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
-  // 规则,根据action,更新state
-  const loginReducer = (prevState: any, action: any) => {
-    switch (action.type) {
-      case "RETRIEVE_TOKEN":
-        return {
-          ...prevState,
-          userToken: action.token,
-          isLoading: false,
-        };
-      case "LOGIN":
-        return {
-          ...prevState,
-          userName: action.id,
-          userToken: action.token,
-          isLoading: false,
-        };
-      case "LOGOUT":
-        return {
-          ...prevState,
-          userName: null,
-          userToken: null,
-          isLoading: false,
-        };
-      case "REGISTER":
-        return {
-          ...prevState,
-          userName: action.id,
-          userToken: action.token,
-          isLoading: false,
-        };
-    }
-  };
-
   const [loginState, dispatch] = React.useReducer(
     loginReducer,
     initialLoginState
@@ -119,12 +81,10 @@ const App = () => {
           await AsyncStorage.setItem("userToken", userToken);
         } catch (error) {
           console.log(error);
-
-          console.log("=============login出现问题==========");
         }
 
         console.log("user token:", userToken);
-        dispatch({ type: "LOGIN", id: userName, token: userToken });
+        dispatch(login(userName, userToken));
       },
       // 登出
       signOut: async () => {
@@ -135,7 +95,7 @@ const App = () => {
         } catch (error) {
           console.log(error);
         }
-        dispatch({ type: "LOGOUT" });
+        dispatch(logout());
       },
       // 注册
       signUp: () => {
@@ -160,8 +120,8 @@ const App = () => {
       } catch (error) {
         console.log(error);
       }
-      // console.log('user token',userToken);
-      dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
+      console.log('重启APP,验证用户是否登录. user token', userToken);
+      dispatch(retrieveToken(userToken));
     }, 1000);
   }, []);
 
