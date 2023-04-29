@@ -89,7 +89,6 @@ const SignInScreen = () => {
     }
 
     signIn(foundUser);
-
     console.log(CONTEXT_SETUP);
   };
 
@@ -135,7 +134,7 @@ const SignInScreen = () => {
             style={[
               styles.textInput,
               {
-                color: "black",
+                color: colors.text,
               },
             ]}
             autoCapitalize="none"
@@ -157,7 +156,7 @@ const SignInScreen = () => {
           style={[
             styles.text_footer,
             {
-              color: "black",
+              color: colors.text,
               marginTop: 35,
             },
           ]}
@@ -173,7 +172,7 @@ const SignInScreen = () => {
             style={[
               styles.textInput,
               {
-                color: "black",
+                color: colors.text,
               },
             ]}
             autoCapitalize="none"
