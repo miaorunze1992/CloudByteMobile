@@ -103,7 +103,14 @@ const SignInScreen = () => {
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>CloudByte株式会社</Text>
+      <Animatable.Image 
+                animation="bounceIn"
+                duration={2500}
+            source={require('../../assets/logo.png')}
+            style={styles.logo}
+            resizeMode="stretch"
+            />
+        <Text style={styles.text_header}>CloudByte株式会社アプリへ、ようこそ!</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"

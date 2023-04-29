@@ -32,6 +32,7 @@ import BookmarkScreen from './src/screens/BookmarkScreen/BookmarkScreen';
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
+  // 页面初期State
   const initialLoginState = {
     isLoading: true,
     userName: null,
@@ -62,6 +63,7 @@ const App = () => {
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
+  // 规则,根据action,更新state
   const loginReducer = (prevState: any, action: any) => {
     switch (action.type) {
       case "RETRIEVE_TOKEN":

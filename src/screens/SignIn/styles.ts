@@ -7,13 +7,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#0088CC",
   },
   header: {
-    flex: 1,
+    flex: 1.5,
     justifyContent: "flex-end",
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
     paddingBottom: 50,
   },
+  logo: {
+    width: 380,
+    height: 130
+  },
   footer: {
-    flex: 3,
+    flex: 2.5,
     backgroundColor: "#fff",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -41,7 +45,9 @@ const styles = StyleSheet.create({
   text_header: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 28,
+    fontSize: 18,
+    marginLeft: 35,
+    marginTop:20
   },
   text_footer: {
     color: "#05375a",
