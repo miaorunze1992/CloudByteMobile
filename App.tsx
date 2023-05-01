@@ -72,10 +72,10 @@ const App = () => {
         const userToken = String(foundUser[0].userToken);
         const userName = foundUser[0].username;
 
-        console.log("=============login请求开始==========");
-        console.log(userToken);
-        console.log(userName);
-        console.log("=============login请求开始==========");
+        console.log("=============login信息详情start==========");
+        console.log("token:" + userToken);
+        console.log("用户姓名:" + userName);
+        console.log("=============login信息详情end==========");
 
         try {
           await AsyncStorage.setItem("userToken", userToken);
@@ -141,7 +141,7 @@ const App = () => {
             <Drawer.Navigator
               drawerContent={(props) => <DrawerContent {...props} />}
             >
-              <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
+              {/* <Drawer.Screen name="HomeDrawer" component={MainTabScreen} /> */}
               <Drawer.Screen name="SupportScreen" component={SupportScreen} />
               <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
               <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
