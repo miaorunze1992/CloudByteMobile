@@ -166,6 +166,16 @@ const App = () => {
                   drawerContent={(props) => <DrawerContent {...props} />}
                 >
                   <Drawer.Screen
+                    name="Main"
+                    component={MainTabScreen}
+                    options={{
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                  <Drawer.Screen
                     name="Home"
                     component={HomeScreen}
                     options={{
