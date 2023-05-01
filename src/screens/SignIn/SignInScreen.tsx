@@ -31,7 +31,9 @@ import Users from "../../model/users";
 
 import styles from "./styles";
 
+
 const SignInScreen = () => {
+
   const [data, setData] = useState({
     username: "",
     password: "",
@@ -44,7 +46,6 @@ const SignInScreen = () => {
   const { colors } = useTheme();
 
   const { signIn } = React.useContext(AuthContext);
-
   // 检测用户名长度
   const handleUserChange = (val: any) => {
     setData({
@@ -124,12 +125,12 @@ const SignInScreen = () => {
             },
           ]}
         >
-          用户名
+          ユーザー名
         </Text>
         <View style={styles.action}>
           <FontAwesome name="user-o" color="black" size={20} />
           <TextInput
-            placeholder="请输入用户名"
+            placeholder="ユーザー名を入力してください"
             placeholderTextColor="#666666"
             style={[
               styles.textInput,
@@ -148,7 +149,7 @@ const SignInScreen = () => {
         </View>
         {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>用户名长度不超过8位</Text>
+            <Text style={styles.errorMsg}>ユーザー名は8文字以下である必要があります</Text>
           </Animatable.View>
         )}
 
@@ -161,12 +162,12 @@ const SignInScreen = () => {
             },
           ]}
         >
-          密码
+          パスワード
         </Text>
         <View style={styles.action}>
           <Feather name="lock" color="black" size={20} />
           <TextInput
-            placeholder="请输入密码"
+            placeholder="パスワードを入力してください"
             placeholderTextColor="#666666"
             secureTextEntry={data.secureTextEntry ? true : false}
             style={[
@@ -188,12 +189,12 @@ const SignInScreen = () => {
         </View>
         {data.isValidPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>密码长度为8~16</Text>
+            <Text style={styles.errorMsg}>パスワードは8文字から16文字の長さである必要があります</Text>
           </Animatable.View>
         )}
 
         <TouchableOpacity>
-          <Text style={{ color: "#0088CC", marginTop: 15 }}>忘记密码?</Text>
+          <Text style={{ color: "#0088CC", marginTop: 15 }}>パスワードをお忘れの方</Text>
         </TouchableOpacity>
 
         <View style={styles.button}>
@@ -215,7 +216,7 @@ const SignInScreen = () => {
                   },
                 ]}
               >
-                登录
+                ログイン
               </Text>
             </LinearGradient>
           </TouchableOpacity>
