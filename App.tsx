@@ -19,19 +19,27 @@ import {
 import { AuthContext } from "./src/components/context";
 import { ThemeContext } from "./src/components/context";
 
-import { loginReducer, initialLoginState } from "./src/store/reducers/authReducer";
-import { login, logout, register, retrieveToken } from "./src/store/actions/authActions";
+import {
+  loginReducer,
+  initialLoginState,
+} from "./src/store/reducers/authReducer";
+import {
+  login,
+  logout,
+  register,
+  retrieveToken,
+} from "./src/store/actions/authActions";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RootStackScreen from "./src/screens/Base/BaseStackScreen";
 
 const Drawer = createDrawerNavigator();
-import { DrawerContent } from './src/screens/DrawerContent/ DrawerContent';
+import { DrawerContent } from "./src/screens/DrawerContent/ DrawerContent";
 
-import MainTabScreen from './src/screens/MainTabScreen/MainTabScreen';
-import SupportScreen from './src/screens/SupportScreen/SupportScreen';
-import SettingsScreen from './src/screens/SettingsScreen/SettingsScreen';
-import BookmarkScreen from './src/screens/BookmarkScreen/BookmarkScreen';
+import MainTabScreen from "./src/screens/MainTabScreen/MainTabScreen";
+import SupportScreen from "./src/screens/SupportScreen/SupportScreen";
+import SettingsScreen from "./src/screens/SettingsScreen/SettingsScreen";
+import BookmarkScreen from "./src/screens/BookmarkScreen/BookmarkScreen";
 import styles from "./src/screens/SignIn/styles";
 import { color } from "react-native-reanimated";
 
@@ -46,7 +54,7 @@ const App = () => {
       ...PaperDefaultTheme.colors,
       background: "#ffffff",
       text: "#333333",
-      mainBackground: "#0088CC"
+      mainBackground: "#0088CC",
     },
   };
 
@@ -58,7 +66,7 @@ const App = () => {
       ...PaperDarkTheme.colors,
       background: "#333333",
       text: "#ffffff",
-      mainBackground: PaperDarkTheme.colors.background
+      mainBackground: PaperDarkTheme.colors.background,
     },
   };
 
@@ -108,9 +116,16 @@ const App = () => {
         // setUserToken('fgkj');
         // setIsLoading(false);
       },
-      // 主题切换
-      toggleTheme: () => {
-        setIsDarkTheme((isDarkTheme) => !isDarkTheme);
+      // 主题切换以及保存
+      toggleTheme: async() => {
+        setIsDarkTheme((isDarkTheme) => {
+          try {
+            AsyncStorage.setItem("theme", JSON.stringify(!isDarkTheme));
+          } catch (error) {
+            console.log(error)
+          }
+          return !isDarkTheme
+        });
       },
     }),
     []
@@ -118,16 +133,19 @@ const App = () => {
 
   useEffect(() => {
     setTimeout(async () => {
-      // setIsLoading(false);
-      let userToken;
-      userToken = null;
+      let userToken,theme = null;
       try {
         userToken = await AsyncStorage.getItem("userToken");
+        theme = await AsyncStorage.getItem("theme");
+        if(theme !== null) setIsDarkTheme(JSON.parse(theme));
+
       } catch (error) {
         console.log(error);
       }
-      console.log('重启APP,验证用户是否登录. user token', userToken);
+      console.log("重启APP,验证用户是否登录. user token", userToken);
+      console.log("重启APP,提取主题. 主题颜色", theme);
       dispatch(retrieveToken(userToken));
+      
     }, 1000);
   }, []);
 
@@ -142,16 +160,20 @@ const App = () => {
   return (
     <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
-        <ThemeContext.Provider value={theme} >
+        <ThemeContext.Provider value={theme}>
           <NavigationContainer theme={theme}>
             {loginState.userToken !== null ? (
-              <Drawer.Navigator
-                drawerContent={(props) => <DrawerContent {...props} />}
-              >
+              <Drawer.Navigator drawerContent={() => <DrawerContent />}>
                 {/* <Drawer.Screen name="HomeDrawer" component={MainTabScreen} options={{ title: '主页', headerStyle: { backgroundColor: theme.colors.mainBackground }, headerTintColor: '#fff' }} /> */}
                 <Drawer.Screen name="SupportScreen" component={SupportScreen} />
-                <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
-                <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
+                <Drawer.Screen
+                  name="SettingsScreen"
+                  component={SettingsScreen}
+                />
+                <Drawer.Screen
+                  name="BookmarkScreen"
+                  component={BookmarkScreen}
+                />
               </Drawer.Navigator>
             ) : (
               <RootStackScreen />

@@ -14,12 +14,13 @@ import {
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import styles from "./styles";
 
 import { AuthContext } from "../../components/context";
 
 export function DrawerContent(props: any) {
-  const paperTheme = useTheme();
 
+  const paperTheme = useTheme();
   const { signOut, toggleTheme } = React.useContext(AuthContext);
 
   return (
@@ -29,30 +30,22 @@ export function DrawerContent(props: any) {
           <View style={styles.userInfoSection}>
             <View style={{ flexDirection: "row", marginTop: 15 }}>
               <Avatar.Image
-                source={{
-                  uri: "https://api.adorable.io/avatars/50/abott@adorable.png",
-                }}
-                size={50}
+                source={require("../../assets/avatar/lufei.jpeg")}
+                size={150}
                 {...(props as any)}
               />
-              <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                <Title style={styles.title}>John Doe</Title>
-                <Caption style={styles.caption}>@j_doe</Caption>
+              <View style={{ marginLeft: 15,marginTop:50, flexDirection: "column" }}>
+                <Title style={styles.title}>苗　潤澤</Title>
+                <Caption style={styles.caption}>教员</Caption>
               </View>
             </View>
 
             <View style={styles.row}>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>
-                  80
+                  @メール
                 </Paragraph>
-                <Caption style={styles.caption}>Following</Caption>
-              </View>
-              <View style={styles.section}>
-                <Paragraph style={[styles.paragraph, styles.caption]}>
-                  100
-                </Paragraph>
-                <Caption style={styles.caption}>Followers</Caption>
+                <Caption style={styles.caption}>byo.juntaku@cloudbyte.jp</Caption>
               </View>
             </View>
           </View>
@@ -62,7 +55,7 @@ export function DrawerContent(props: any) {
               icon={({ color, size }) => (
                 <Icon name="home-outline" color={color} size={size} />
               )}
-              label="Home"
+              label="首页"
               onPress={() => {
                 props.navigation.navigate("Home");
               }}
@@ -71,7 +64,7 @@ export function DrawerContent(props: any) {
               icon={({ color, size }) => (
                 <Icon name="account-outline" color={color} size={size} />
               )}
-              label="Profile"
+              label="个人"
               onPress={() => {
                 props.navigation.navigate("Profile");
               }}
@@ -80,7 +73,7 @@ export function DrawerContent(props: any) {
               icon={({ color, size }) => (
                 <Icon name="bookmark-outline" color={color} size={size} />
               )}
-              label="Bookmarks"
+              label="便签"
               onPress={() => {
                 props.navigation.navigate("BookmarkScreen");
               }}
@@ -89,7 +82,7 @@ export function DrawerContent(props: any) {
               icon={({ color, size }) => (
                 <Icon name="cog" color={color} size={size} />
               )}
-              label="Settings"
+              label="系统"
               onPress={() => {
                 props.navigation.navigate("SettingsScreen");
               }}
@@ -98,7 +91,7 @@ export function DrawerContent(props: any) {
               icon={({ color, size }) => (
                 <Icon name="account-check-outline" color={color} size={size} />
               )}
-              label="Support"
+              label="支援"
               onPress={() => {
                 props.navigation.navigate("SupportScreen");
               }}
@@ -112,7 +105,7 @@ export function DrawerContent(props: any) {
               {...props}
             >
               <View style={styles.preference}>
-                <Text {...props}>暗黑主题</Text>
+                <Text {...props} style={[styles.paragraph]}>暗黑主题</Text>
                 <View pointerEvents="none">
                   <Switch
                     value={paperTheme.dark}
@@ -137,7 +130,7 @@ export function DrawerContent(props: any) {
           icon={({ color, size }) => (
             <Icon name="exit-to-app" color={color} size={size} />
           )}
-          label="Sign Out"
+          label="登出"
           onPress={() => {
             signOut();
           }}
@@ -146,49 +139,3 @@ export function DrawerContent(props: any) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  drawerContent: {
-    flex: 1,
-  },
-  userInfoSection: {
-    paddingLeft: 20,
-  },
-  title: {
-    fontSize: 16,
-    marginTop: 3,
-    fontWeight: "bold",
-  },
-  caption: {
-    fontSize: 14,
-    lineHeight: 14,
-  },
-  row: {
-    marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  section: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 15,
-  },
-  paragraph: {
-    fontWeight: "bold",
-    marginRight: 3,
-  },
-  drawerSection: {
-    marginTop: 15,
-  },
-  bottomDrawerSection: {
-    marginBottom: 15,
-    borderTopColor: "#f4f4f4",
-    borderTopWidth: 1,
-  },
-  preference: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-});

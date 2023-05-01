@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -25,7 +25,7 @@ import {
   CONTEXT_SETUP,
 } from "../../utils/message";
 
-import { AuthContext } from "../../components/context";
+import { AuthContext, ThemeContext } from "../../components/context";
 
 import Users from "../../model/users";
 
@@ -33,6 +33,8 @@ import styles from "./styles";
 
 
 const SignInScreen = () => {
+
+  const theme = useContext(ThemeContext);
 
   const [data, setData] = useState({
     username: "",
@@ -94,8 +96,7 @@ const SignInScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor="#009387" barStyle="light-content" />
+    <View style={{...styles.container,backgroundColor: theme.colors.mainBackground}}>
       <View style={styles.header}>
         <Animatable.Image
           animation="bounceIn"
@@ -181,7 +182,7 @@ const SignInScreen = () => {
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? (
-              <Feather name="eye-off" color="#0088CC" size={20} />
+              <Feather name="eye-off" color={theme.colors.mainBackground} size={20} />
             ) : (
               <Feather name="eye" color="grey" size={20} />
             )}
@@ -194,7 +195,7 @@ const SignInScreen = () => {
         )}
 
         <TouchableOpacity>
-          <Text style={{ color: "#0088CC", marginTop: 15 }}>パスワードをお忘れの方</Text>
+          <Text style={{ color: theme.colors.mainBackground, marginTop: 15 }}>パスワードをお忘れの方</Text>
         </TouchableOpacity>
 
         <View style={styles.button}>
@@ -205,7 +206,7 @@ const SignInScreen = () => {
             }}
           >
             <LinearGradient
-              colors={["#0088CC", "#0088CC"]}
+              colors={[theme.colors.mainBackground, theme.colors.mainBackground]}
               style={styles.signIn}
             >
               <Text
