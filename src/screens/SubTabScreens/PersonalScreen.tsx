@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
-const ProfileScreen = () => {
+const PersonalScreen = ({navigation}:any) => {
     return (
       <View style={styles.container}>
-        <Text>Profile Screen</Text>
+        <Text>PersonalScreen  TODO</Text>
         <Button
           title="Click Here"
           onPress={() => console.log('Button Clicked!')}
@@ -13,7 +13,7 @@ const ProfileScreen = () => {
     );
 };
 
-export default ProfileScreen;
+export default PersonalScreen;
 
 const styles = StyleSheet.create({
   container: {

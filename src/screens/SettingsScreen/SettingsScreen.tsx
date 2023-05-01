@@ -4,7 +4,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 const SettingsScreen = () => {
     return (
       <View style={styles.container}>
-        <Text>Settings Screen</Text>
+        <Text>Settings Screen123</Text>
         <Button
           title="Click Here"
           onPress={() => console.log('Button Clicked!')}

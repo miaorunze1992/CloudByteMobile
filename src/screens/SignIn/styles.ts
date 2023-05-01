@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    backgroundColor: "red"
   },
   textSign: {
     fontSize: 18,

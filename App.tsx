@@ -37,11 +37,11 @@ const Drawer = createDrawerNavigator();
 import { DrawerContent } from "./src/screens/DrawerContent/ DrawerContent";
 
 import MainTabScreen from "./src/screens/MainTabScreen/MainTabScreen";
-import SupportScreen from "./src/screens/SupportScreen/SupportScreen";
-import SettingsScreen from "./src/screens/SettingsScreen/SettingsScreen";
-import BookmarkScreen from "./src/screens/BookmarkScreen/BookmarkScreen";
-import styles from "./src/screens/SignIn/styles";
-import { color } from "react-native-reanimated";
+import ItemScreen from "./src/screens/SubTabScreens/ItemScreen";
+import MessageScreen from "./src/screens/SubTabScreens/MessageScreen";
+import PersonalScreen from "./src/screens/SubTabScreens/PersonalScreen";
+import CalendarScreen from "./src/screens/CalendarScreen/Calendar";
+import HomeScreen from "./src/screens/SubTabScreens/HomeScreen";
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
@@ -117,14 +117,14 @@ const App = () => {
         // setIsLoading(false);
       },
       // 主题切换以及保存
-      toggleTheme: async() => {
+      toggleTheme: async () => {
         setIsDarkTheme((isDarkTheme) => {
           try {
             AsyncStorage.setItem("theme", JSON.stringify(!isDarkTheme));
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
-          return !isDarkTheme
+          return !isDarkTheme;
         });
       },
     }),
@@ -133,19 +133,18 @@ const App = () => {
 
   useEffect(() => {
     setTimeout(async () => {
-      let userToken,theme = null;
+      let userToken,
+        theme = null;
       try {
         userToken = await AsyncStorage.getItem("userToken");
         theme = await AsyncStorage.getItem("theme");
-        if(theme !== null) setIsDarkTheme(JSON.parse(theme));
-
+        if (theme !== null) setIsDarkTheme(JSON.parse(theme));
       } catch (error) {
         console.log(error);
       }
       console.log("重启APP,验证用户是否登录. user token", userToken);
       console.log("重启APP,提取主题. 主题颜色", theme);
       dispatch(retrieveToken(userToken));
-      
     }, 1000);
   }, []);
 
@@ -163,18 +162,65 @@ const App = () => {
         <ThemeContext.Provider value={theme}>
           <NavigationContainer theme={theme}>
             {loginState.userToken !== null ? (
-              <Drawer.Navigator drawerContent={() => <DrawerContent />}>
-                {/* <Drawer.Screen name="HomeDrawer" component={MainTabScreen} options={{ title: '主页', headerStyle: { backgroundColor: theme.colors.mainBackground }, headerTintColor: '#fff' }} /> */}
-                <Drawer.Screen name="SupportScreen" component={SupportScreen} />
-                <Drawer.Screen
-                  name="SettingsScreen"
-                  component={SettingsScreen}
-                />
-                <Drawer.Screen
-                  name="BookmarkScreen"
-                  component={BookmarkScreen}
-                />
-              </Drawer.Navigator>
+                <Drawer.Navigator
+                  drawerContent={(props) => <DrawerContent {...props} />}
+                >
+                  <Drawer.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    options={{
+                      title: "首页",
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="Item"
+                    component={ItemScreen}
+                    options={{
+                      title: "事项",
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="Message"
+                    component={MessageScreen}
+                    options={{
+                      title: "消息",
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="Personal"
+                    component={PersonalScreen}
+                    options={{
+                      title: "个人",
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="Calendar"
+                    component={CalendarScreen}
+                    options={{
+                      title: "日历",
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                </Drawer.Navigator>
             ) : (
               <RootStackScreen />
             )}

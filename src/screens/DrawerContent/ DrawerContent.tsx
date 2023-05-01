@@ -19,9 +19,9 @@ import styles from "./styles";
 import { AuthContext } from "../../components/context";
 
 export function DrawerContent(props: any) {
-
   const paperTheme = useTheme();
   const { signOut, toggleTheme } = React.useContext(AuthContext);
+  console.log(props);
 
   return (
     <View style={{ flex: 1 }}>
@@ -34,7 +34,13 @@ export function DrawerContent(props: any) {
                 size={150}
                 {...(props as any)}
               />
-              <View style={{ marginLeft: 15,marginTop:50, flexDirection: "column" }}>
+              <View
+                style={{
+                  marginLeft: 15,
+                  marginTop: 50,
+                  flexDirection: "column",
+                }}
+              >
                 <Title style={styles.title}>苗　潤澤</Title>
                 <Caption style={styles.caption}>教员</Caption>
               </View>
@@ -45,7 +51,9 @@ export function DrawerContent(props: any) {
                 <Paragraph style={[styles.paragraph, styles.caption]}>
                   @メール
                 </Paragraph>
-                <Caption style={styles.caption}>byo.juntaku@cloudbyte.jp</Caption>
+                <Caption style={styles.caption}>
+                  byo.juntaku@cloudbyte.jp
+                </Caption>
               </View>
             </View>
           </View>
@@ -62,18 +70,45 @@ export function DrawerContent(props: any) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="account-outline" color={color} size={size} />
+                <Icon name="format-list-bulleted" color={color} size={size} />
               )}
-              label="个人"
+              label="事项"
               onPress={() => {
-                props.navigation.navigate("Profile");
+                props.navigation.navigate("Item");
               }}
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
+                <Icon name="bell-outline" color={color} size={size} />
               )}
-              label="便签"
+              label="消息"
+              onPress={() => {
+                props.navigation.navigate("Message");
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
+                <Icon name="account-outline" color={color} size={size} />
+              )}
+              label="个人"
+              onPress={() => {
+                props.navigation.navigate("Personal");
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
+                <Icon name="calendar-check-outline" color={color} size={size} />
+              )}
+              label="日历"
+              onPress={() => {
+                props.navigation.navigate("Calendar");
+              }}
+            />
+            <DrawerItem
+              icon={({ color, size }) => (
+                <Icon name="briefcase-outline" color={color} size={size} />
+              )}
+              label="勤务"
               onPress={() => {
                 props.navigation.navigate("BookmarkScreen");
               }}
@@ -89,7 +124,7 @@ export function DrawerContent(props: any) {
             />
             <DrawerItem
               icon={({ color, size }) => (
-                <Icon name="account-check-outline" color={color} size={size} />
+                <Icon name="face-agent" color={color} size={size} />
               )}
               label="支援"
               onPress={() => {
@@ -105,7 +140,9 @@ export function DrawerContent(props: any) {
               {...props}
             >
               <View style={styles.preference}>
-                <Text {...props} style={[styles.paragraph]}>暗黑主题</Text>
+                <Text {...props} style={[styles.paragraph]}>
+                  暗黑主题
+                </Text>
                 <View pointerEvents="none">
                   <Switch
                     value={paperTheme.dark}
