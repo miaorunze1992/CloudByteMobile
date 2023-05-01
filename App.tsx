@@ -17,6 +17,8 @@ import {
 } from "react-native-paper";
 
 import { AuthContext } from "./src/components/context";
+import { ThemeContext } from "./src/components/context";
+
 import { loginReducer, initialLoginState } from "./src/store/reducers/authReducer";
 import { login, logout, register, retrieveToken } from "./src/store/actions/authActions";
 
@@ -30,6 +32,8 @@ import MainTabScreen from './src/screens/MainTabScreen/MainTabScreen';
 import SupportScreen from './src/screens/SupportScreen/SupportScreen';
 import SettingsScreen from './src/screens/SettingsScreen/SettingsScreen';
 import BookmarkScreen from './src/screens/BookmarkScreen/BookmarkScreen';
+import styles from "./src/screens/SignIn/styles";
+import { color } from "react-native-reanimated";
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
@@ -42,6 +46,7 @@ const App = () => {
       ...PaperDefaultTheme.colors,
       background: "#ffffff",
       text: "#333333",
+      mainBackground: "#0088CC"
     },
   };
 
@@ -53,6 +58,7 @@ const App = () => {
       ...PaperDarkTheme.colors,
       background: "#333333",
       text: "#ffffff",
+      mainBackground: PaperDarkTheme.colors.background
     },
   };
 
@@ -136,20 +142,22 @@ const App = () => {
   return (
     <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
-        <NavigationContainer theme={theme}>
-          {loginState.userToken !== null ? (
-            <Drawer.Navigator
-              drawerContent={(props) => <DrawerContent {...props} />}
-            >
-              {/* <Drawer.Screen name="HomeDrawer" component={MainTabScreen} /> */}
-              <Drawer.Screen name="SupportScreen" component={SupportScreen} />
-              <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
-              <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
-            </Drawer.Navigator>
-          ) : (
-            <RootStackScreen />
-          )}
-        </NavigationContainer>
+        <ThemeContext.Provider value={theme} >
+          <NavigationContainer theme={theme}>
+            {loginState.userToken !== null ? (
+              <Drawer.Navigator
+                drawerContent={(props) => <DrawerContent {...props} />}
+              >
+                {/* <Drawer.Screen name="HomeDrawer" component={MainTabScreen} options={{ title: '主页', headerStyle: { backgroundColor: theme.colors.mainBackground }, headerTintColor: '#fff' }} /> */}
+                <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+                <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
+                <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
+              </Drawer.Navigator>
+            ) : (
+              <RootStackScreen />
+            )}
+          </NavigationContainer>
+        </ThemeContext.Provider>
       </AuthContext.Provider>
     </PaperProvider>
   );
