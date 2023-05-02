@@ -12,6 +12,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ThemeContext } from "../../components/context";
 
+import { recordAttendance } from "./Attendance";
+
 const CalendarScreen = () => {
   const theme = useContext(ThemeContext);
 
@@ -62,13 +64,13 @@ const CalendarScreen = () => {
       id: "1",
       text: "出勤打卡",
       iconName: "clock-outline",
-      onPress: () => console.log("出勤打卡"),
+      onPress: () => recordAttendance("userId", "check-in")
     },
     {
       id: "2",
       text: "退勤打卡",
       iconName: "clock-out",
-      onPress: () => console.log("退勤打卡"),
+      onPress: () => recordAttendance("userId", "check-out")
     },
     {
       id: "3",
