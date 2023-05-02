@@ -120,9 +120,9 @@ const CalendarScreen = () => {
             selectedDotColor: theme.colors.primary,
             disabledArrowColor: theme.colors.disabled,
             todayButtonTextColor: mainColor,
-            textDayFontWeight: 'bold',
-            textMonthFontWeight: 'bold',
-            textDayHeaderFontWeight:'bold',
+            textDayFontWeight: "bold",
+            textMonthFontWeight: "bold",
+            textDayHeaderFontWeight: "bold",
           }}
         />
         <TouchableOpacity onPress={backToToday}>
