@@ -20,11 +20,11 @@ const MainTabScreen = () => {
 
   const AnimatedIcon = ({ iconName, color, active }: any) => (
     <Animatable.View
-      animation={active ? "tada" : undefined}
+      animation={active ? "pulse" : undefined}
       duration={800}
       delay={100}
     >
-      <Icon name={iconName} color={color} size={active ? 33 : 24} />
+      <Icon name={iconName} color={color} size={active ? 31 : 24} />
     </Animatable.View>
   );
 
@@ -67,7 +67,7 @@ const MainTabScreen = () => {
           tabBarLabel: "事项",
           tabBarIcon: ({ color }) => (
             <AnimatedIcon
-              iconName="list-outline"
+              iconName="list-circle-outline"
               color={activeTab === "Item" ? "#fff" : "#a9a9a9"}
               active={activeTab === "Item"}
             />
