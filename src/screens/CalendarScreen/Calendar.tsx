@@ -151,6 +151,7 @@ const CalendarScreen = () => {
       <View style={styles.flatListsContainer}>
         <Animated.FlatList
           data={data}
+          numColumns={2} //添加这行代码以创建两列
           renderItem={({ item }) => (
             <TouchableOpacity
               style={{
@@ -229,23 +230,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   flatListsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 6,
-    marginTop: 10,
-    marginLeft: 8,
+    flex: 1, // 使flatListsContainer占据可用空间
+    flexWrap: 'wrap', // 使元素进行折行
+    flexDirection: 'row', // 使元素水平排列
+    justifyContent: 'space-between', // 使元素之间有间距
+    padding: 22, // 容器的内边距
   },
   flatList: {
     flex: 1,
     marginRight: 8,
   },
   listItem: {
+    width: '48%', // 稍微减小宽度以留出间距
+    aspectRatio: 1, // 添加这行以使按钮保持正方形形状
+    borderRadius: 40, // 使按钮变为圆形
     paddingHorizontal: 12,
     paddingVertical: 15,
-    borderRadius: 24,
-    marginBottom: 12,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '1%', // 添加间距
   },
   listItemText: {
     color: "white",
