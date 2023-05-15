@@ -5,5 +5,6 @@ export const isUsernameValid = (val: string) => {
 };
 
 export const isPasswordValid = (val: string) => {
-    return val.trim().length >= 8 && val.trim().length <= 16;
+    //return val.trim().length >= 8 && val.trim().length <= 16;
+    return val.trim().length <= 16;
 };

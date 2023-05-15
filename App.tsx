@@ -2,6 +2,9 @@
 import React, { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { store } from "./src/store/store.js";
+
 import {
   NavigationContainer,
   DefaultTheme as NavigationDefaultTheme,
@@ -19,10 +22,6 @@ import {
 import { AuthContext } from "./src/components/context";
 import { ThemeContext } from "./src/components/context";
 
-import {
-  loginReducer,
-  initialLoginState,
-} from "./src/store/reducers/authReducer";
 import {
   login,
   logout,
@@ -72,23 +71,19 @@ const App = () => {
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
-  const [loginState, dispatch] = React.useReducer(
-    loginReducer,
-    initialLoginState
-  );
+  const loginState = useSelector((state:any) => state.auth);
+  const dispatch = useDispatch();
 
   const authContext = React.useMemo(
     () => ({
       // 登入
       signIn: async (foundUser: any) => {
-        // setUserToken('token');
-        // setIsLoading(false);
-        const userToken = String(foundUser[0].userToken);
-        const userName = foundUser[0].username;
+        const userToken = String(foundUser.token);
+        const user = foundUser.user;
 
         console.log("=============login信息详情start==========");
         console.log("token:" + userToken);
-        console.log("用户姓名:" + userName);
+        console.log("用户姓名:" + user);
         console.log("=============login信息详情end==========");
 
         try {
@@ -96,9 +91,8 @@ const App = () => {
         } catch (error) {
           console.log(error);
         }
-
         console.log("user token:", userToken);
-        dispatch(login(userName, userToken));
+        dispatch(login(user, userToken));
       },
       // 登出
       signOut: async () => {
@@ -128,7 +122,7 @@ const App = () => {
         });
       },
     }),
-    []
+    [dispatch]
   );
 
   useEffect(() => {
@@ -157,11 +151,12 @@ const App = () => {
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <AuthContext.Provider value={authContext}>
-        <ThemeContext.Provider value={theme}>
-          <NavigationContainer theme={theme}>
-            {loginState.userToken !== null ? (
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <AuthContext.Provider value={authContext}>
+          <ThemeContext.Provider value={theme}>
+            <NavigationContainer theme={theme}>
+              {loginState.userToken !== null ? (
                 <Drawer.Navigator
                   drawerContent={(props) => <DrawerContent {...props} />}
                 >
@@ -231,13 +226,14 @@ const App = () => {
                     }}
                   />
                 </Drawer.Navigator>
-            ) : (
-              <RootStackScreen />
-            )}
-          </NavigationContainer>
-        </ThemeContext.Provider>
-      </AuthContext.Provider>
-    </PaperProvider>
+              ) : (
+                <RootStackScreen />
+              )}
+            </NavigationContainer>
+          </ThemeContext.Provider>
+        </AuthContext.Provider>
+      </PaperProvider>
+    </Provider>
   );
 };
 

@@ -1,41 +1,39 @@
-// authReducer.ts
-
-export const initialLoginState = {
+const initialLoginState = {
   isLoading: true,
-  userName: null,
+  user: {},
   userToken: null,
 };
 
-export const loginReducer = (prevState: any, action: any) => {
+export const authReducer = (state = initialLoginState, action: any) => {
   switch (action.type) {
     case "RETRIEVE_TOKEN":
       return {
-        ...prevState,
+        ...state,
         userToken: action.token,
         isLoading: false,
       };
     case "LOGIN":
       return {
-        ...prevState,
-        userName: action.id,
+        ...state,
+        user: action.user,
         userToken: action.token,
         isLoading: false,
       };
     case "LOGOUT":
       return {
-        ...prevState,
-        userName: null,
+        ...state,
+        user: {},
         userToken: null,
         isLoading: false,
       };
     case "REGISTER":
       return {
-        ...prevState,
-        userName: action.id,
+        ...state,
+        user: action.user,
         userToken: action.token,
         isLoading: false,
       };
     default:
-      return prevState;
+      return state;
   }
 };

@@ -7,9 +7,12 @@
 // export const USERNAME_PASSWORD_WRONG = "用户名或密码错误";
 // export const CONTEXT_SETUP = "准备搭建上下文";
 
+
+export const LOGIN_SUCCESS = "ログインが成功しました";
 export const ERROR_INPUT = "入力エラー";
 export const USERNAME_PASSWORD_EMPTY = "ユーザー名またはパスワードが空白です";
 export const OK_TEXT = "はい";
 export const LOGIN_INVALID = "ログイン情報が無効です";
+export const LOGIN_USER_NOT_EXIST = "ユーザー名が存在しません";
 export const USERNAME_PASSWORD_WRONG = "ユーザー名またはパスワードが間違っています";
 export const CONTEXT_SETUP = "コンテキストの設定準備中";

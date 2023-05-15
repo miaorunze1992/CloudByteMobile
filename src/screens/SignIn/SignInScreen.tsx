@@ -13,6 +13,8 @@ import LinearGradient from "react-native-linear-gradient";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 
+import { requestLogin } from "../../api/auth";
+
 import { useTheme } from "react-native-paper";
 
 import { isUsernameValid, isPasswordValid } from "../../utils/validators";
@@ -23,6 +25,7 @@ import {
   LOGIN_INVALID,
   USERNAME_PASSWORD_WRONG,
   CONTEXT_SETUP,
+  LOGIN_USER_NOT_EXIST,
 } from "../../utils/message";
 
 import { AuthContext, ThemeContext } from "../../components/context";
@@ -31,9 +34,7 @@ import Users from "../../model/users";
 
 import styles from "./styles";
 
-
 const SignInScreen = () => {
-
   const theme = useContext(ThemeContext);
 
   const [data, setData] = useState({
@@ -76,27 +77,37 @@ const SignInScreen = () => {
   };
 
   // 登录按钮
-  const loginHandle = (userName: any, password: any) => {
-    const foundUser = Users.filter((item) => {
-      return userName == item.username && password == item.password;
-    });
-
+  const loginHandle = async (userName: any, password: any) => {
     if (data.username.length == 0 || data.password.length == 0) {
       Alert.alert(ERROR_INPUT, USERNAME_PASSWORD_EMPTY, [{ text: OK_TEXT }]);
       return;
     }
 
-    if (foundUser.length == 0) {
-      Alert.alert(LOGIN_INVALID, USERNAME_PASSWORD_WRONG, [{ text: OK_TEXT }]);
-      return;
+    const userData = await requestLogin(userName, password);
+
+    switch (userData.message) {
+      case 'LOGIN_SUCCESS':
+        signIn(userData);
+
+        console.log(CONTEXT_SETUP);
+        break;
+      case 'LOGIN_USER_NOT_EXIST':
+        Alert.alert(LOGIN_INVALID, LOGIN_USER_NOT_EXIST, [{ text: OK_TEXT }]);
+        break;
+      case 'USERNAME_PASSWORD_WRONG':
+        Alert.alert(LOGIN_INVALID, USERNAME_PASSWORD_WRONG, [{ text: OK_TEXT }]);
+        break;
     }
 
-    signIn(foundUser);
-    console.log(CONTEXT_SETUP);
   };
 
   return (
-    <View style={{...styles.container,backgroundColor: theme.colors.mainBackground}}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: theme.colors.mainBackground,
+      }}
+    >
       <View style={styles.header}>
         <Animatable.Image
           animation="bounceIn"
@@ -150,7 +161,9 @@ const SignInScreen = () => {
         </View>
         {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>ユーザー名は8文字以下である必要があります</Text>
+            <Text style={styles.errorMsg}>
+              ユーザー名は8文字以下である必要があります
+            </Text>
           </Animatable.View>
         )}
 
@@ -182,7 +195,11 @@ const SignInScreen = () => {
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? (
-              <Feather name="eye-off" color={theme.colors.mainBackground} size={20} />
+              <Feather
+                name="eye-off"
+                color={theme.colors.mainBackground}
+                size={20}
+              />
             ) : (
               <Feather name="eye" color="grey" size={20} />
             )}
@@ -190,12 +207,16 @@ const SignInScreen = () => {
         </View>
         {data.isValidPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>パスワードは8文字から16文字の長さである必要があります</Text>
+            <Text style={styles.errorMsg}>
+              パスワードは16文字以内である必要があります
+            </Text>
           </Animatable.View>
         )}
 
         <TouchableOpacity>
-          <Text style={{ color: theme.colors.mainBackground, marginTop: 15 }}>パスワードをお忘れの方</Text>
+          <Text style={{ color: theme.colors.mainBackground, marginTop: 15 }}>
+            パスワードをお忘れの方
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.button}>
@@ -206,7 +227,10 @@ const SignInScreen = () => {
             }}
           >
             <LinearGradient
-              colors={[theme.colors.mainBackground, theme.colors.mainBackground]}
+              colors={[
+                theme.colors.mainBackground,
+                theme.colors.mainBackground,
+              ]}
               style={styles.signIn}
             >
               <Text

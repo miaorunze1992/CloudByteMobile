@@ -13,8 +13,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { ThemeContext } from "../../components/context";
 
 import { recordAttendance } from "./Attendance";
+import { useSelector } from 'react-redux';
 
 const CalendarScreen = () => {
+
+  const user = useSelector((state:any)=> state);
   const theme = useContext(ThemeContext);
 
   const mainColor = theme.colors.mainBackground;
@@ -64,13 +67,13 @@ const CalendarScreen = () => {
       id: "1",
       text: "出勤打卡",
       iconName: "clock-outline",
-      onPress: () => recordAttendance("userId", "check-in")
+      onPress: () => recordAttendance(user)
     },
     {
       id: "2",
       text: "退勤打卡",
       iconName: "clock-out",
-      onPress: () => recordAttendance("userId", "check-out")
+      onPress: () => recordAttendance(user)
     },
     {
       id: "3",

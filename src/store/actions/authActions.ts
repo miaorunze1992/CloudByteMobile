@@ -4,9 +4,9 @@ export const LOGOUT = "LOGOUT";
 export const REGISTER = "REGISTER";
 export const RETRIEVE_TOKEN = "RETRIEVE_TOKEN";
 
-export const login = (userName: string, userToken: string) => ({
+export const login = (user: any, userToken: string) => ({
   type: LOGIN,
-  id: userName,
+  user: user,
   token: userToken,
 });
 
@@ -14,9 +14,9 @@ export const logout = () => ({
   type: LOGOUT,
 });
 
-export const register = (userName: string, userToken: string) => ({
+export const register = (user: any, userToken: string) => ({
   type: REGISTER,
-  id: userName,
+  user: user,
   token: userToken,
 });
 
