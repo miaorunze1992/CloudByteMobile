@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
-  Button,
   TouchableOpacity,
   Text,
   Animated,
@@ -13,15 +12,32 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { ThemeContext } from "../../components/context";
 
 import { recordAttendance } from "./Attendance";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 const CalendarScreen = () => {
 
-  const user = useSelector((state:any)=> state);
+  const navigation = useNavigation<NavigationProp<{AttendanceStats:undefined}, 'AttendanceStats'>>();
+
+  const user = useSelector((state: any) => state);
   const theme = useContext(ThemeContext);
 
   const mainColor = theme.colors.mainBackground;
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+
+  const todayTime = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .replace("T", " ")
+    .slice(0, 19);
+
+  // 初始化按钮颜色
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false); // checkIn
+  const [isCheckOutButtonDisabled, setIsCheckOutButtonDisabled] =
+    useState(true); // checkOut
 
   const [markedDates, setMarkedDates] = useState({
     [today]: {
@@ -52,6 +68,55 @@ const CalendarScreen = () => {
     setRefresh((prevRefresh) => prevRefresh + 1);
   }, [mainColor]);
 
+  useEffect(() => {
+    const checkAttendance = async () => {
+      // await AsyncStorage.removeItem("attendanceDate_checkIn");
+      // await AsyncStorage.removeItem("attendanceDate_checkOut");
+      const currentDate = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
+      const attendanceDate = await AsyncStorage.getItem(
+        "attendanceDate_checkIn"
+      );
+
+      if (attendanceDate === currentDate) {
+        console.log("出勤已经打过卡了");
+        // 如果用户今天打过卡，那么button设置成非活性
+        setIsButtonDisabled(true);
+        setIsCheckOutButtonDisabled(false);
+      } else {
+        console.log("出勤还没有打过卡");
+        // 新的一天或者还没有打卡，清空存储的打卡信息并允许打卡
+        await AsyncStorage.removeItem("attendanceDate_checkIn");
+        setIsButtonDisabled(false); // 这里应该设置为false，以便用户可以打卡
+        setIsCheckOutButtonDisabled(true);
+      }
+
+      const attendanceDateCheckOut = await AsyncStorage.getItem(
+        "attendanceDate_checkOut"
+      );
+      if (attendanceDateCheckOut === currentDate) {
+        console.log("退勤已经打过卡了");
+        // 如果用户今天打过卡，那么button设置成非活性
+        setIsCheckOutButtonDisabled(true);
+      } 
+      // else {
+      //   console.log("退勤还没有打过卡");
+      //   // 新的一天或者还没有打卡，清空存储的打卡信息并允许打卡
+      //   await AsyncStorage.removeItem("attendanceDate_checkOut");
+      //   if (isButtonDisabled) {
+      //     setIsCheckOutButtonDisabled(false);
+      //   } // 这里应该设置为false，以便用户可以打卡
+      // }
+    };
+    // 当应用启动时立即执行一次检查
+    checkAttendance();
+    // 每隔一小时检查一次日期
+    const intervalId = setInterval(checkAttendance, 60 * 60 * 1000);
+    // 当组件卸载时清除定时器
+    return () => clearInterval(intervalId);
+  }, []);
+
   const backToToday = () => {
     setMarkedDates({
       [today]: {
@@ -67,25 +132,36 @@ const CalendarScreen = () => {
       id: "1",
       text: "出勤打卡",
       iconName: "clock-outline",
-      onPress: () => recordAttendance(user)
+      isDisabled: isButtonDisabled,
+      onPress: async () => {
+        const success = await recordAttendance(user, todayTime, "check-in");
+        setIsButtonDisabled(success);
+        setIsCheckOutButtonDisabled(false);
+      },
     },
     {
       id: "2",
       text: "退勤打卡",
       iconName: "clock-out",
-      onPress: () => recordAttendance(user)
+      isDisabled: isCheckOutButtonDisabled,
+      onPress: async () => {
+        const success = await recordAttendance(user, todayTime, "check-out");
+        setIsCheckOutButtonDisabled(success);
+      },
     },
     {
       id: "3",
       text: "因故请假",
       iconName: "calendar-clock",
+      isDisabled: false,
       onPress: () => console.log("因故请假"),
     },
     {
       id: "4",
       text: "考勤统计",
       iconName: "chart-bar",
-      onPress: () => console.log("考勤统计"),
+      isDisabled: false,
+      onPress: () => navigation.navigate('AttendanceStats')
     },
   ];
 
@@ -159,9 +235,9 @@ const CalendarScreen = () => {
             <TouchableOpacity
               style={{
                 ...styles.listItem,
-                backgroundColor: mainColor,
+                backgroundColor: item.isDisabled ? "grey" : mainColor,
               }}
-              onPress={item.onPress}
+              onPress={item.isDisabled ? () => {} : item.onPress}
             >
               <Icon name={item.iconName} size={24} color="white" />
               <Text style={styles.listItemText}>{item.text}</Text>
@@ -234,9 +310,9 @@ const styles = StyleSheet.create({
   },
   flatListsContainer: {
     flex: 1, // 使flatListsContainer占据可用空间
-    flexWrap: 'wrap', // 使元素进行折行
-    flexDirection: 'row', // 使元素水平排列
-    justifyContent: 'space-between', // 使元素之间有间距
+    flexWrap: "wrap", // 使元素进行折行
+    flexDirection: "row", // 使元素水平排列
+    justifyContent: "space-between", // 使元素之间有间距
     padding: 22, // 容器的内边距
   },
   flatList: {
@@ -244,14 +320,14 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   listItem: {
-    width: '48%', // 稍微减小宽度以留出间距
+    width: "48%", // 稍微减小宽度以留出间距
     aspectRatio: 1, // 添加这行以使按钮保持正方形形状
     borderRadius: 40, // 使按钮变为圆形
     paddingHorizontal: 12,
     paddingVertical: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: '1%', // 添加间距
+    justifyContent: "center",
+    alignItems: "center",
+    margin: "1%", // 添加间距
   },
   listItemText: {
     color: "white",

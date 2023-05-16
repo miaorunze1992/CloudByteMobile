@@ -1,30 +1,43 @@
 type AttendanceType = "check-in" | "check-out";
-import { useSelector } from 'react-redux';
-import { store } from '../../store/store.js';
+import { requestRecordAttendance } from "../../api/auth.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AttendanceRecord {
-    id:string;
-    date: string;
-    type:AttendanceType;
+  user: any;
+  date: string;
+  type: AttendanceType;
 }
 
-const AttendanceStorage: AttendanceRecord[] = [];
+export const recordAttendance = async (
+  state: any,
+  date: string,
+  type: AttendanceType
+) => {
 
-export const recordAttendance = (state:any) =>{
+  const user = state.auth.user; // 状态栏信息获取
 
-    console.log('caotamadede +++++++++++')
-    console.log(state)
-    console.log('caotamadede +++++++++++')
+//   const checkInFlag = await AsyncStorage.getItem("attendanceDate_checkIn");
 
-    // const userType = useSelector((state) => state.auth.user.usertype);
-    
-    // const currentDate = new Date().toISOString().split("T")[0];
-    // const newAttendanceRecord: AttendanceRecord = {
-    //     id,
-    //     date:currentDate,
-    // //     type
-    // // }
+  const newAttendanceRecord: AttendanceRecord = { user, date, type };
+  const res = await requestRecordAttendance(newAttendanceRecord);
+  console.log("返回结果");
+  console.log(res);
 
-    // AttendanceStorage.push(newAttendanceRecord);
-    // console.log("Attendance recorded:", newAttendanceRecord);
-}
+  if (type === "check-in") {
+    try {
+      await AsyncStorage.setItem("attendanceDate_checkIn", res.recordDate);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  } else {
+    try {
+      await AsyncStorage.setItem("attendanceDate_checkOut", res.recordDate);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+};

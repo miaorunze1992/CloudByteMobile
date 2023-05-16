@@ -30,8 +30,6 @@ import {
 
 import { AuthContext, ThemeContext } from "../../components/context";
 
-import Users from "../../model/users";
-
 import styles from "./styles";
 
 const SignInScreen = () => {

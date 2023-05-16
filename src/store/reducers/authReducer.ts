@@ -9,6 +9,7 @@ export const authReducer = (state = initialLoginState, action: any) => {
     case "RETRIEVE_TOKEN":
       return {
         ...state,
+        user: action.user,
         userToken: action.token,
         isLoading: false,
       };

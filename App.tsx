@@ -42,6 +42,8 @@ import PersonalScreen from "./src/screens/SubTabScreens/PersonalScreen";
 import CalendarScreen from "./src/screens/CalendarScreen/Calendar";
 import HomeScreen from "./src/screens/SubTabScreens/HomeScreen";
 
+import AttendanceStats from "./src/screens/CalendarScreen/AttendanceStats";
+
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
@@ -71,7 +73,7 @@ const App = () => {
 
   const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
 
-  const loginState = useSelector((state:any) => state.auth);
+  const loginState = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
 
   const authContext = React.useMemo(
@@ -88,10 +90,10 @@ const App = () => {
 
         try {
           await AsyncStorage.setItem("userToken", userToken);
+          await AsyncStorage.setItem("user", JSON.stringify(user));
         } catch (error) {
           console.log(error);
         }
-        console.log("user token:", userToken);
         dispatch(login(user, userToken));
       },
       // 登出
@@ -100,6 +102,7 @@ const App = () => {
         // setIsLoading(false);
         try {
           await AsyncStorage.removeItem("userToken");
+          await AsyncStorage.removeItem("user");
         } catch (error) {
           console.log(error);
         }
@@ -128,9 +131,13 @@ const App = () => {
   useEffect(() => {
     setTimeout(async () => {
       let userToken,
-        theme = null;
+        theme,
+        user = null;
+      let userStr: any;
       try {
         userToken = await AsyncStorage.getItem("userToken");
+        userStr = await AsyncStorage.getItem("user");
+        user = JSON.parse(userStr);
         theme = await AsyncStorage.getItem("theme");
         if (theme !== null) setIsDarkTheme(JSON.parse(theme));
       } catch (error) {
@@ -138,7 +145,8 @@ const App = () => {
       }
       console.log("重启APP,验证用户是否登录. user token", userToken);
       console.log("重启APP,提取主题. 主题颜色", theme);
-      dispatch(retrieveToken(userToken));
+      console.log("重启APP,提取用户信息", user);
+      dispatch(retrieveToken(user, userToken));
     }, 1000);
   }, []);
 
@@ -219,6 +227,17 @@ const App = () => {
                     component={CalendarScreen}
                     options={{
                       title: "日历",
+                      headerStyle: {
+                        backgroundColor: theme.colors.mainBackground,
+                      },
+                      headerTintColor: "#fff",
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="AttendanceStats"
+                    component={AttendanceStats}
+                    options={{
+                      title: "考勤统计",
                       headerStyle: {
                         backgroundColor: theme.colors.mainBackground,
                       },

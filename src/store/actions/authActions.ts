@@ -20,7 +20,8 @@ export const register = (user: any, userToken: string) => ({
   token: userToken,
 });
 
-export const retrieveToken = (userToken: any) => ({
+export const retrieveToken = (user: any, userToken: any) => ({
   type: RETRIEVE_TOKEN,
+  user: user,
   token: userToken,
 });
