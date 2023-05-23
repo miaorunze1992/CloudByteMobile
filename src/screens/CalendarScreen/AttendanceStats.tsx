@@ -143,46 +143,37 @@ const AttendanceStats = ({ navigation }: any) => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate("Calendar")}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 48,
-          }}
-        >
-          <View>
-            <Text
-              style={{ fontSize: 18, color: mainColor, fontWeight: "bold" }}
-            >
-              出勤時間
-            </Text>
-            <Text
-              style={{ fontSize: 20, color: mainColor, fontWeight: "bold" }}
-            >
-              <Icon
-                name="clock-time-nine-outline"
-                size={25}
-                color={mainColor}
-              />
-              12小时
-            </Text>
-          </View>
-          <View>
-            <Text
-              style={{ fontSize: 18, color: mainColor, fontWeight: "bold" }}
-            >
-              休み時間
-            </Text>
-            <Text
-              style={{ fontSize: 20, color: mainColor, fontWeight: "bold" }}
-            >
-              <Icon name="weather-night" size={25} color={mainColor} />
-              12小时
-            </Text>
-          </View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 48,
+        }}
+      >
+        <View>
+          <Text style={{ fontSize: 18, color: mainColor, fontWeight: "bold" }}>
+            出勤時間
+          </Text>
+          <Text style={{ fontSize: 20, color: mainColor, fontWeight: "bold" }}>
+            <Icon name="clock-time-nine-outline" size={25} color={mainColor} />
+            12小时
+          </Text>
         </View>
+        <View>
+          <Text style={{ fontSize: 18, color: mainColor, fontWeight: "bold" }}>
+            休み時間
+          </Text>
+          <Text style={{ fontSize: 20, color: mainColor, fontWeight: "bold" }}>
+            <Icon name="weather-night" size={25} color={mainColor} />
+            12小时
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Calendar")}>
+        <Text style={{ fontSize: 12, color: mainColor, fontWeight: "bold", marginLeft:290 }}>
+          📅返回日历
+        </Text>
       </TouchableOpacity>
       <View
         style={{
