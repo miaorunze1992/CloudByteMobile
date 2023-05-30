@@ -167,7 +167,7 @@ const AttendanceStats = ({ navigation }: any) => {
             marginLeft: 335,
           }}
         >
-          📅
+        <Icon name="calendar-today" size={18} color={mainColor} />
         </Text>
       </TouchableOpacity>
       <View

@@ -18,3 +18,9 @@ export const getAttendanceRecords = async (searchData) => {
   const res = await axios.post(`${API_URL}/cb_getAttendanceRecords`, { searchData })
   return res.data;
 }
+
+export const updateLeaveHours = async (leaveHours) => {
+  console.log(leaveHours);
+  const res = await axios.post(`${API_URL}/cb_updateLeaveHours`, { leaveHours })
+  return res
+}

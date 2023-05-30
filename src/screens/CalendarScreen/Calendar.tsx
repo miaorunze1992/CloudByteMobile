@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   Animated,
+  Alert,
 } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -16,6 +17,13 @@ import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { updateLeaveHours } from "../../api/auth";
+import {
+  checkIn,
+  checkOut,
+  createRecord,
+  getRecords,
+} from "../../api/attendance";
 
 const CalendarScreen = () => {
   const navigation =
@@ -40,6 +48,7 @@ const CalendarScreen = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false); // checkIn
   const [isCheckOutButtonDisabled, setIsCheckOutButtonDisabled] =
     useState(true); // checkOut
+  const [isLeaveButtonDisabled, setIsLeaveButtonDisabled] = useState(false);
 
   const [markedDates, setMarkedDates] = useState({
     [today]: {
@@ -72,44 +81,40 @@ const CalendarScreen = () => {
 
   useEffect(() => {
     const checkAttendance = async () => {
-      // await AsyncStorage.removeItem("attendanceDate_checkIn");
-      // await AsyncStorage.removeItem("attendanceDate_checkOut");
+      // 当前用户ID
+      const userId = user.auth.user.id;
+      // 获取当前系统日期
       const currentDate = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
         .toISOString()
         .slice(0, 10);
-      const attendanceDate = await AsyncStorage.getItem(
-        "attendanceDate_checkIn"
-      );
-
-      if (attendanceDate === currentDate) {
-        console.log("出勤已经打过卡了");
-        // 如果用户今天打过卡，那么button设置成非活性
-        setIsButtonDisabled(true);
-        setIsCheckOutButtonDisabled(false);
+      // 查询数据当天考勤数据情况
+      const rs = await getRecords({ userId, currentDate });
+      // 没有当天数据的话创建一个
+      if (rs.message === "ATTENDANCE_RECORD_0") {
+        try {
+          await createRecord({ userId, currentDate });
+        } catch (error) {
+          Alert.alert("APP连接不上,未能创建打卡记录");
+        }
       } else {
-        console.log("出勤还没有打过卡");
-        // 新的一天或者还没有打卡，清空存储的打卡信息并允许打卡
-        await AsyncStorage.removeItem("attendanceDate_checkIn");
-        setIsButtonDisabled(false); // 这里应该设置为false，以便用户可以打卡
-        setIsCheckOutButtonDisabled(true);
+        // 如果当天考勤数据有的话
+        if (rs.results[0].check_in_time === null) {
+          // 可以出勤打卡
+          setIsButtonDisabled(false);
+          // 不可以退勤打卡
+          setIsCheckOutButtonDisabled(true);
+        } else if (rs.results[0].check_out_time === null) {
+          // 不可以出勤打卡
+          setIsButtonDisabled(true);
+          // 可以退勤打卡
+          setIsCheckOutButtonDisabled(false);
+        } else if(rs.results[0].check_in_time !== null && rs.results[0].check_out_time !== null){
+          // 不可以出勤打卡
+          setIsButtonDisabled(true);
+          // 不可以退勤打卡
+          setIsCheckOutButtonDisabled(true);
+        }
       }
-
-      const attendanceDateCheckOut = await AsyncStorage.getItem(
-        "attendanceDate_checkOut"
-      );
-      if (attendanceDateCheckOut === currentDate) {
-        console.log("退勤已经打过卡了");
-        // 如果用户今天打过卡，那么button设置成非活性
-        setIsCheckOutButtonDisabled(true);
-      }
-      // else {
-      //   console.log("退勤还没有打过卡");
-      //   // 新的一天或者还没有打卡，清空存储的打卡信息并允许打卡
-      //   await AsyncStorage.removeItem("attendanceDate_checkOut");
-      //   if (isButtonDisabled) {
-      //     setIsCheckOutButtonDisabled(false);
-      //   } // 这里应该设置为false，以便用户可以打卡
-      // }
     };
     // 当应用启动时立即执行一次检查
     checkAttendance();
@@ -129,6 +134,13 @@ const CalendarScreen = () => {
     setRefresh((prevRefresh) => prevRefresh + 1);
   };
 
+  // 当前用户ID
+  const userId = user.auth.user.id;
+  // 获取当前系统日期
+  const currentDate = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
   const data = [
     {
       id: "1",
@@ -136,9 +148,29 @@ const CalendarScreen = () => {
       iconName: "clock-outline",
       isDisabled: isButtonDisabled,
       onPress: async () => {
-        const success = await recordAttendance(user, todayTime, "check-in");
-        setIsButtonDisabled(success);
-        setIsCheckOutButtonDisabled(false);
+        Alert.alert(
+          "出勤打卡",
+          "确认要出勤打卡吗",
+          [
+            {
+              text: "取消",
+              onPress: () => console.log("取消出勤打卡"),
+              style: "cancel",
+            },
+            {
+              text: "是",
+              onPress: async () => {
+                try {
+                  await checkIn({ userId, currentDate });
+                  setIsButtonDisabled(true);
+                  setIsCheckOutButtonDisabled(false);
+                } catch (error) {
+                  Alert.alert("APP出勤打卡失败,请重试");
+                }
+              },
+            },
+          ]
+        )
       },
     },
     {
@@ -147,16 +179,85 @@ const CalendarScreen = () => {
       iconName: "clock-out",
       isDisabled: isCheckOutButtonDisabled,
       onPress: async () => {
-        const success = await recordAttendance(user, todayTime, "check-out");
-        setIsCheckOutButtonDisabled(success);
+        Alert.alert(
+          "退勤打卡",
+          "确认要退勤打卡吗",
+          [
+            {
+              text: "取消",
+              onPress: () => console.log("取消退勤打卡"),
+              style: "cancel",
+            },
+            {
+              text: "是",
+              onPress: async () => {
+                try {
+                  await checkOut({ userId, currentDate });
+                  setIsCheckOutButtonDisabled(true);
+                } catch (error) {
+                  Alert.alert("APP退勤打卡失败,请重试");
+                }
+              },
+            },
+          ]
+        )
       },
     },
     {
       id: "3",
       text: "因故请假",
       iconName: "calendar-clock",
-      isDisabled: false,
-      onPress: () => console.log("因故请假"),
+      isDisabled: isLeaveButtonDisabled,
+      onPress: () =>
+        Alert.alert(
+          "选择请假时段",
+          "请选择您的请假时段",
+          [
+            {
+              text: "上午",
+              onPress: async () => {
+                const success = await updateLeaveHours({
+                  hours: 4,
+                  recordDate: today,
+                  userId: user.auth.user.id,
+                });
+                console.log("选择了上午");
+                // 在这里调用你的后台API
+                setIsLeaveButtonDisabled(true);
+              },
+            },
+            {
+              text: "下午",
+              onPress: async () => {
+                const success = await updateLeaveHours({
+                  hours: 4,
+                  recordDate: today,
+                  userId: user.auth.user.id,
+                });
+                console.log("选择了下午");
+                // 在这里调用你的后台API
+                setIsLeaveButtonDisabled(true);
+              },
+            },
+            {
+              text: "全天",
+              onPress: async () => {
+                const success = await updateLeaveHours({
+                  hours: 8,
+                  recordDate: today,
+                  userId: user.auth.user.id,
+                });
+                console.log("选择了全天");
+                // 在这里调用你的后台API
+                setIsLeaveButtonDisabled(true);
+              },
+            },
+            {
+              text: "劳资不想请假",
+            },
+          ],
+          { cancelable: true }
+        ),
     },
     {
       id: "4",
