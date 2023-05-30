@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Text,
-  Button,
   FlatList,
   TouchableOpacity,
 } from "react-native";
@@ -11,59 +10,48 @@ import { useSelector } from "react-redux";
 import { ThemeContext } from "../../components/context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Holidays from "date-holidays";
+import { getAttendanceRecords } from "../../api/auth";
 
 const AttendanceStats = ({ navigation }: any) => {
+  // 初期化DATA
   const user = useSelector((state: any) => state);
   const theme = useContext(ThemeContext);
   const mainColor = theme.colors.mainBackground;
 
+  // 获取当月信息
   const date = new Date();
-  const month = date.getMonth() + 1; // JavaScript months are 0-based, so +1 makes it human-readable
   const year = date.getFullYear();
-
-  useEffect(() => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth(); // Note: JavaScript months start at 0 for January
-
-    // Get the number of days in the current month
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    const newAttendanceData = [];
-
-    const hd = new Holidays("JP");
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateString = `${year}-${String(month + 1).padStart(
-        2,
-        "0"
-      )}-${String(day).padStart(2, "0")}`;
-      const dateObject = new Date(dateString);
-
-      // Skip weekends
-      if (dateObject.getDay() === 0 || dateObject.getDay() === 6) {
-        continue;
-      }
-
-      // Skip Japanese public holidays
-      if (hd.isHoliday(dateObject)) {
-        continue;
-      }
-
-      // Add a new attendance data object for each day
-      newAttendanceData.push({
-        date: dateString,
-        checkIn: "08:00",
-        checkOut: "17:00",
-        totalHours: "9 h",
-      });
-    }
-
-    setAttendanceData(newAttendanceData);
-  }, []);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const currentDate = `${year}-${month}`;
 
   // 每日打卡条数
   const [attendanceData, setAttendanceData] = useState([{}]);
+  const [total,setTotal] = useState(0);
+
+  useEffect(() => {
+    // 获取当月信息
+    const currentDate = `${year}-${month}`;
+    const fetchData = async () => {
+      const res = await getAttendanceRecords({
+        user_id: user.auth.user.id,
+        currentDate: currentDate,
+      });
+      console.log("获取的信息=====================");
+      console.log("获取的信息=====================");
+      console.log("获取的信息=====================");
+      console.log("获取的信息=====================");
+      console.log(res.data);
+      console.log("获取的信息=====================");
+      console.log("获取的信息=====================");
+      console.log("获取的信息=====================");
+      console.log("获取的信息=====================");
+      setAttendanceData(res.data)
+      let total = res.data.reduce((sum:any,record:any)=> sum+record.totalHours,0);
+      setTotal(total);
+    };
+
+    fetchData();
+  }, [user.auth.user.id, currentDate]);
 
   const renderItem = ({ item }: any) => (
     <View
@@ -157,7 +145,7 @@ const AttendanceStats = ({ navigation }: any) => {
           </Text>
           <Text style={{ fontSize: 20, color: mainColor, fontWeight: "bold" }}>
             <Icon name="clock-time-nine-outline" size={25} color={mainColor} />
-            12小时
+            {total}h
           </Text>
         </View>
         <View>
@@ -171,8 +159,15 @@ const AttendanceStats = ({ navigation }: any) => {
         </View>
       </View>
       <TouchableOpacity onPress={() => navigation.navigate("Calendar")}>
-        <Text style={{ fontSize: 12, color: mainColor, fontWeight: "bold", marginLeft:290 }}>
-          📅返回日历
+        <Text
+          style={{
+            fontSize: 13,
+            color: mainColor,
+            fontWeight: "bold",
+            marginLeft: 335,
+          }}
+        >
+          📅
         </Text>
       </TouchableOpacity>
       <View

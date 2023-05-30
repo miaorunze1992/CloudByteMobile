@@ -15,11 +15,13 @@ import { recordAttendance } from "./Attendance";
 import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 const CalendarScreen = () => {
-
-  const navigation = useNavigation<NavigationProp<{AttendanceStats:undefined}, 'AttendanceStats'>>();
+  const navigation =
+    useNavigation<
+      NavigationProp<{ AttendanceStats: undefined }, "AttendanceStats">
+    >();
 
   const user = useSelector((state: any) => state);
   const theme = useContext(ThemeContext);
@@ -99,7 +101,7 @@ const CalendarScreen = () => {
         console.log("退勤已经打过卡了");
         // 如果用户今天打过卡，那么button设置成非活性
         setIsCheckOutButtonDisabled(true);
-      } 
+      }
       // else {
       //   console.log("退勤还没有打过卡");
       //   // 新的一天或者还没有打卡，清空存储的打卡信息并允许打卡
@@ -161,7 +163,7 @@ const CalendarScreen = () => {
       text: "考勤统计",
       iconName: "chart-bar",
       isDisabled: false,
-      onPress: () => navigation.navigate('AttendanceStats')
+      onPress: () => navigation.navigate("AttendanceStats"),
     },
   ];
 

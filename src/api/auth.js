@@ -12,3 +12,9 @@ export const requestRecordAttendance = async (attendanceRecord) => {
   const res = await axios.post(`${API_URL}/cb_recordAttendance`, { attendanceRecord });
   return res.data;
 };
+
+export const getAttendanceRecords = async (searchData) => {
+  console.log(searchData);
+  const res = await axios.post(`${API_URL}/cb_getAttendanceRecords`, { searchData })
+  return res.data;
+}
