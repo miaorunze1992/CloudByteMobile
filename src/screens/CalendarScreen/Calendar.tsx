@@ -12,9 +12,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ThemeContext } from "../../components/context";
 
-import { recordAttendance } from "./Attendance";
 import { useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { updateLeaveHours } from "../../api/auth";

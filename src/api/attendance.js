@@ -25,3 +25,10 @@ export const checkOut = async (checkOutData) => {
   const res = await axios.post(`${API_URL}/cb_checkOut`, checkOutData);
   return res;
 };
+
+// 获取当月所有打卡信息
+export const getAttendanceRecords = async (searchData) => {
+  console.log(searchData);
+  const res = await axios.post(`${API_URL}/cb_getAttendanceRecords`, { searchData })
+  return res.data;
+}

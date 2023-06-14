@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import { ThemeContext } from "../../components/context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Holidays from "date-holidays";
-import { getAttendanceRecords } from "../../api/auth";
+import { getAttendanceRecords } from "../../api/attendance";
+import { useIsFocused } from "@react-navigation/native";
 
 const AttendanceStats = ({ navigation }: any) => {
   // 初期化DATA
@@ -28,6 +29,8 @@ const AttendanceStats = ({ navigation }: any) => {
   const [attendanceData, setAttendanceData] = useState([{}]);
   const [total,setTotal] = useState(0);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     // 获取当月信息
     const currentDate = `${year}-${month}`;
@@ -36,22 +39,15 @@ const AttendanceStats = ({ navigation }: any) => {
         user_id: user.auth.user.id,
         currentDate: currentDate,
       });
-      console.log("获取的信息=====================");
-      console.log("获取的信息=====================");
-      console.log("获取的信息=====================");
-      console.log("获取的信息=====================");
-      console.log(res.data);
-      console.log("获取的信息=====================");
-      console.log("获取的信息=====================");
-      console.log("获取的信息=====================");
-      console.log("获取的信息=====================");
       setAttendanceData(res.data)
       let total = res.data.reduce((sum:any,record:any)=> sum+record.totalHours,0);
       setTotal(total);
     };
-
-    fetchData();
-  }, [user.auth.user.id, currentDate]);
+    // 如果页面在焦点中，则加载数据
+    if (isFocused) {
+      fetchData();
+    }
+  }, [user.auth.user.id, currentDate, isFocused]);
 
   const renderItem = ({ item }: any) => (
     <View
